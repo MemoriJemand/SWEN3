@@ -42,7 +42,7 @@ namespace DocumentManagementSystem.Controllers
         { 
             //find document with this id and pass it on to delete it
             _repository.Delete(Guid.Parse(id));
-            return StatusCode(StatusCodes.Status200OK)
+            return StatusCode(StatusCodes.Status200OK);
             //throw new NotImplementedException(); 
         }
 
