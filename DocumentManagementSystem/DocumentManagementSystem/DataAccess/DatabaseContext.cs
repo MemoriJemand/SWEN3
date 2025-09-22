@@ -12,6 +12,6 @@ namespace DocumentManagementSystem.DataAccess
 
     public class DocumentContext :DbContext
     {
-        public DbSet<DocumentData> Documents { get; set; }
+        public virtual DbSet<DocumentData> Documents { get; set; }
     }
 }
