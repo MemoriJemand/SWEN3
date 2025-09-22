@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: myapp
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  api:
+    build: 
+      context: .
+      dockerfile: DocumentManagementSystem/Dockerfile
+    depends_on:
+      - db
+    environment:
+      ConnectionStrings__Default: "Host=db;Database=myapp;Username=user;Password=password"
+    ports:
+      - "5001:80"
+  
+  webapp:
+    build:
+      context: .
+      dockerfile: DocumentManagementSystem/Dockerfile
+    ports:
+      - "5000:80"
+
+volumes:
+  pgdata:
