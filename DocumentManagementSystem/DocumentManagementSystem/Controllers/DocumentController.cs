@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DocumentManagementSystem.DataAccess;
+using DocumentManagementSystem.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
 
@@ -8,44 +10,63 @@ namespace DocumentManagementSystem.Controllers
     [ApiController]
     public class DocumentController : ControllerBase
     {
+        IDocumentRepository _repository;
         [HttpGet]
-        public IValueHttpResult GetDocuments([FromBody] string parameters)
+        public ActionResult<IEnumerable<DocumentData>> GetDocuments([FromBody] string parameters)
         {
             //if parameters not empty, pass it on to the search, otherwise list all documents
-            throw new NotImplementedException();
+            if (parameters == "")
+            {
+                var shownDocuments = _repository.GetAll();
+                return Ok(shownDocuments);
+            }
+            else
+            {
+                throw new NotImplementedException();
+            }
+            
         }
 
         [HttpPost]
-        public IValueHttpResult NewDocument(/*figure out new document input format*/)
+        public IActionResult NewDocument(/*figure out new document input format*/)
         {
             //parse the input and send it on to the new document processing
-            
-            throw new NotImplementedException();
+            DocumentData document = new();//add input parse and everything related to that
+            _repository.Insert(document);
+            return StatusCode(StatusCodes.Status200OK);
+            //throw new NotImplementedException();
         }
 
         [HttpDelete("{id}")]
-        public IValueHttpResult DeleteDocument([FromRoute(Name = "id")]string id) 
+        public IActionResult DeleteDocument([FromRoute(Name = "id")]string id) 
         { 
             //find document with this id and pass it on to delete it
-            throw new NotImplementedException(); 
+            _repository.Delete(Guid.Parse(id));
+            return StatusCode(StatusCodes.Status200OK)
+            //throw new NotImplementedException(); 
         }
 
         [HttpGet("{id}")]
-        public IValueHttpResult GetDocument([FromRoute(Name = "id")] string id)
+        public ActionResult<DocumentData> GetDocument([FromRoute(Name = "id")] string id)
         {
             //find specific document and return it
-            throw new NotImplementedException();
+            var document = _repository.GetById(Guid.Parse(id));
+            return Ok(document);
+            //throw new NotImplementedException();
         }
 
         [HttpPut("{id}")]
-        public IValueHttpResult UpdateDocument([FromRoute(Name = "id")] string id, [FromBody] string body) 
+        public IActionResult UpdateDocument([FromRoute(Name = "id")] string id, [FromBody] string body) 
         { 
             //find specific document and change to body input
-            throw new NotImplementedException(); 
+            DocumentData data = new DocumentData(); //parse once again
+            _repository.Update(data);
+            return Ok();
+            //throw new NotImplementedException(); 
         }
 
         [HttpGet("{id}/data")]
-        public IValueHttpResult GetMetadata([FromRoute(Name = "id")] string id) 
+        public IActionResult GetMetadata([FromRoute(Name = "id")] string id) 
         { 
             //find specific document and return its metadata
             throw new NotImplementedException(); 

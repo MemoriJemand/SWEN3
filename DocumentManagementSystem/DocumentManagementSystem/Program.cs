@@ -12,7 +12,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSingleton<IDocumentRepository, DocumentRepository>();
 builder.Services.AddDbContextPool<DatabaseContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("MainDatabase") ??
         throw new InvalidOperationException("Connection string 'MainDatabase'" +" not found.")));
