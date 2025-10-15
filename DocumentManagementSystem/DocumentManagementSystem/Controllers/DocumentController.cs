@@ -12,6 +12,7 @@ namespace DocumentManagementSystem.Controllers
     public class DocumentController : ControllerBase
     {
         IDocumentRepository _repository;
+        INewDocumentPublisher _publisher;
         public DocumentController(IDocumentRepository documentRepository)
         {
             _repository = documentRepository;   

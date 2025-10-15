@@ -10,9 +10,9 @@ namespace OCRWorker.Messaging
         
         public async void SendDocument(string document)
         {
-            await Channel.QueueDeclareAsync("ocrResults", true, false, false, null);
+            await Channel.QueueDeclareAsync("documents_processed", true, false, false, null);
             var body = Encoding.UTF8.GetBytes(document);
-            await Channel.BasicPublishAsync(exchange: string.Empty, routingKey: "ocrResults", body: body);
+            await Channel.BasicPublishAsync(exchange: "DocumentManager", routingKey: "document_read", body: body);
         }
     }
 }

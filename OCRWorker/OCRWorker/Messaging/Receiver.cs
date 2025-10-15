@@ -12,7 +12,7 @@ namespace OCRWorker.Messaging
 
         public async Task<String> ReceiveDocument()
         {
-            await Channel.QueueDeclareAsync("documents", true, false, false, null);
+            await Channel.QueueDeclareAsync("documents_new", true, false, false, null);
             var consumer = new AsyncEventingBasicConsumer(Channel);
             consumer.ReceivedAsync += async (model, ea) =>
             {
@@ -20,7 +20,7 @@ namespace OCRWorker.Messaging
                 message = Encoding.UTF8.GetString(body);
             };
 
-            await Channel.BasicConsumeAsync("documents", autoAck: true, consumer: consumer);
+            await Channel.BasicConsumeAsync("documents_new", autoAck: true, consumer: consumer);
 
             return message;
         }

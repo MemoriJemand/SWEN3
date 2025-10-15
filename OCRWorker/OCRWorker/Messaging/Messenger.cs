@@ -10,10 +10,11 @@ namespace OCRWorker.Messaging
         public Sender Sender = new();
         public Receiver Receiver = new();
         
-        public async void ConnectMQ()
+        public Messenger() 
         {
+            Factory.HostName = "rabbitmq";
             Factory.ClientProvidedName = "app:DMM component:OCR";
-            connection = await Factory.CreateConnectionAsync();
+            connection = Factory.CreateConnectionAsync().Result;
             ChannelMQ();
         }
 

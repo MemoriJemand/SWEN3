@@ -6,7 +6,7 @@ Messenger _messenger = new();
 
 while (true)
 {
-    await _messenger.Receiver.ReceiveDocument();
-    //do something
-    _messenger.Sender.SendDocument("documentSent");
+    var message = await _messenger.Receiver.ReceiveDocument();
+    message = message.Trim();
+    _messenger.Sender.SendDocument(message);
 }

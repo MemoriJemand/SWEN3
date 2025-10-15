@@ -4,6 +4,11 @@ using DocumentManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using System.Reflection.Metadata;
+using Messaging.Common;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Messaging.Common.Options;
+using Messaging.Common.Extensions;
+using DocumentManagementSystem.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +32,15 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod();
     });
 });
+builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMq"));
 
+var mq = builder.Configuration.GetSection("RabbitMq").Get<RabbitMqOptions>()!;
+builder.Services.AddRabbitMq(mq.HostName, mq.UserName, mq.Password, mq.VirtualHost);
+// Register the event publisher implementation as a singleton.
+// IOrderEventPublisher is the contract (interface).
+// RabbitMqOrderEventPublisher is the concrete implementation that publishes OrderPlacedEvent to RabbitMQ.
+// Singleton lifetime is correct because publisher reuses the same RabbitMQ channel for all messages.
+builder.Services.AddSingleton<INewDocumentPublisher, RabbitMqOrderEventPublisher>();
 
 var app = builder.Build();
 
