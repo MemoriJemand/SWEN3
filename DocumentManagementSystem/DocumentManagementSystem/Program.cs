@@ -34,13 +34,10 @@ builder.Services.AddCors(options =>
 });
 builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("RabbitMq"));
 
+//RabbitMQ aufgebaut mithilfe von https://dotnettutorials.net
 var mq = builder.Configuration.GetSection("RabbitMq").Get<RabbitMqOptions>()!;
 builder.Services.AddRabbitMq(mq.HostName, mq.UserName, mq.Password, mq.VirtualHost);
-// Register the event publisher implementation as a singleton.
-// IOrderEventPublisher is the contract (interface).
-// RabbitMqOrderEventPublisher is the concrete implementation that publishes OrderPlacedEvent to RabbitMQ.
-// Singleton lifetime is correct because publisher reuses the same RabbitMQ channel for all messages.
-builder.Services.AddSingleton<INewDocumentPublisher, RabbitMqOrderEventPublisher>();
+builder.Services.AddSingleton<INewDocumentPublisher, NewDocumentPublisher>();
 
 var app = builder.Build();
 

@@ -18,7 +18,6 @@ namespace DocumentManagementSystem.Controllers
             _repository = documentRepository;   
         }
         
-        //Messenger _messenger = new();
         [HttpGet]
         public ActionResult<IEnumerable<DocumentData>> GetDocuments()
         {
