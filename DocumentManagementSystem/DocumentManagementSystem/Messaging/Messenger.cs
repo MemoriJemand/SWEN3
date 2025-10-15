@@ -5,7 +5,13 @@ namespace DocumentManagementSystem.Messaging
 {
     public class Messenger
     {
-        private ConnectionFactory Factory = new();
+        private ConnectionFactory Factory = new ConnectionFactory()
+        {
+            HostName = "rabbitmq",
+            Port = 5672,
+            UserName = "guest",
+            Password = "guest"
+        };
         private IConnection connection;
         public Sender Sender = new();
         public Receiver Receiver = new();

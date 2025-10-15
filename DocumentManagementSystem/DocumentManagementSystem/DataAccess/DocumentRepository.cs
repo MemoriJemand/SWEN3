@@ -4,13 +4,14 @@ namespace DocumentManagementSystem.DataAccess
 {
     public class DocumentRepository : IDocumentRepository
     {
-        private readonly DocumentContext _context;
+        //private readonly DocumentContext _context;
+        private readonly DatabaseContext _context;
 
-        public DocumentRepository()
+        /*public DocumentRepository()
         {
             _context = new DocumentContext();
-        }
-        public DocumentRepository(DocumentContext context)
+        }*/
+        public DocumentRepository(DatabaseContext context)
         {
             _context = context;
         }
