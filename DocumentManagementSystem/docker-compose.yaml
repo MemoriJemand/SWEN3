@@ -17,18 +17,21 @@ services:
     depends_on:
       - db
     environment:
-      ConnectionStrings__Default: "Host=db;Database=myapp;Username=user;Password=password"
-    expose:
-      - "80"
+    - ConnectionStrings__MainDatabase=Host=db;Port=5432;Database=myapp;Username=user;Password=password
+    - ASPNETCORE_URLS=http://+:80
+    - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+    - "8080:80"
   
   webapp:
     build:
       context: ./documentmanagementui
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "5173:5173"
     depends_on:
       - api
+    command: npm run dev -- --host
 
   rabbitmq:
     image: rabbitmq:4-management
@@ -38,6 +41,7 @@ services:
       - 15672:15672
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+      
 
 volumes:
   pgdata:

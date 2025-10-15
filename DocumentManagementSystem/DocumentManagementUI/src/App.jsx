@@ -1,11 +1,11 @@
-//import { useState } from 'react'
+/*//import { useState } from 'react'
 import './App.css'
 
 // install react router for navigation
 // npm install react-router-dom
 
 function App() {
-    /*    const [count, setCount] = useState(0)*/
+    //    const [count, setCount] = useState(0)
 
     function Documents() {
         return (
@@ -91,4 +91,124 @@ function App() {
   )
 }
 
-export default App
+export default App*/
+import { useEffect, useState } from 'react';
+import './App.css';
+
+function App() {
+    const [documents, setDocuments] = useState([]);
+    const [selectedDoc, setSelectedDoc] = useState(null);
+    const [newDocName, setNewDocName] = useState("");
+    const [newDocFile, setNewDocFile] = useState(null);
+
+    useEffect(() => {
+        fetch("http://localhost:8080/api/documents")
+            .then(res => res.json())
+            .then(data => {
+                console.log("API response:", data);
+                if (Array.isArray(data)) {
+                    setDocuments(data);
+                } else {
+                    console.error("Unerwartete Antwort:", data);
+                    setDocuments([]);
+                }
+            })
+            .catch(err => {
+                console.error("Fehler beim Laden:", err);
+                setDocuments([]);
+            });
+    }, []);
+
+
+    function changeCurrentDoc(id) {
+        fetch(`http://localhost:8080/api/documents/${id}`)
+            .then(res => res.json())
+            .then(data => setSelectedDoc(data))
+            .catch(err => console.error("Fehler beim Laden des Dokuments:", err));
+    }
+
+    function updateDoc() {
+        if (!selectedDoc) return;
+        fetch(`http://localhost:8080/api/documents/${selectedDoc.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(selectedDoc)
+        }).then(() => console.log("Dokument aktualisiert"));
+    }
+
+    function deleteDoc() {
+        if (!selectedDoc) return;
+        fetch(`http://localhost:8080/api/documents/${selectedDoc.id}`, {
+            method: "DELETE"
+        }).then(() => console.log("Dokument gelöscht"));
+    }
+
+    function metaDoc() {
+        if (!selectedDoc) return;
+        fetch(`http://localhost:8080/api/documents/${selectedDoc.id}/data`)
+            .then(res => res.json())
+            .then(data => console.log("Metadaten:", data));
+    }
+
+    function uploadDoc(e) {
+        e.preventDefault();
+        const formData = new FormData();
+        formData.append("name", newDocName);
+        formData.append("file", newDocFile);
+
+        fetch("http://localhost:8080/api/documents", {
+            method: "POST",
+            body: formData
+        }).then(() => console.log("Dokument hochgeladen"));
+    }
+
+    return (
+        <>
+            <h1>Document Management System</h1>
+            <div style={{ display: "flex", gap: "2rem" }}>
+                <div style={{ width: "20%" }}>
+                    <h3>Dokumente</h3>
+                    {documents.map(doc => (
+                        <button key={doc.id} onClick={() => changeCurrentDoc(doc.id)}>
+                            {doc.title || "Dokument"}
+                        </button>
+                    ))}
+                </div>
+                <div style={{ width: "60%" }}>
+                    <h3>Aktuelles Dokument</h3>
+                    {selectedDoc ? (
+                        <>
+                            <h2>{selectedDoc.title}</h2>
+                            <p>{selectedDoc.summary}</p>
+                        </>
+                    ) : (
+                        <p>Kein Dokument ausgewählt</p>
+                    )}
+                </div>
+                <div style={{ width: "20%" }}>
+                    <button onClick={updateDoc}>Update</button>
+                    <button onClick={deleteDoc}>Delete</button>
+                    <button onClick={metaDoc}>Metadata</button>
+                </div>
+            </div>
+
+            <form onSubmit={uploadDoc} style={{ marginTop: "2rem" }}>
+                <h3>Neues Dokument hochladen</h3>
+                <input
+                    type="text"
+                    placeholder="Dokumentname"
+                    value={newDocName}
+                    onChange={e => setNewDocName(e.target.value)}
+                />
+                <input
+                    type="file"
+                    onChange={e => setNewDocFile(e.target.files[0])}
+                />
+                <button type="submit">Hochladen</button>
+            </form>
+        </>
+    );
+}
+
+export default App;
+

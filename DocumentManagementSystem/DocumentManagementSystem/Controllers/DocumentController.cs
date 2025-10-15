@@ -12,35 +12,39 @@ namespace DocumentManagementSystem.Controllers
     public class DocumentController : ControllerBase
     {
         IDocumentRepository _repository;
-        Messenger _messenger = new();
-        [HttpGet]
-        public ActionResult<IEnumerable<DocumentData>> GetDocuments([FromBody] string parameters)
+        INewDocumentPublisher _publisher;
+        public DocumentController(IDocumentRepository documentRepository)
         {
-            //if parameters not empty, pass it on to the search, otherwise list all documents
-            if (parameters == "")
-            {
-                var shownDocuments = _repository.GetAll();
-                return Ok(shownDocuments);
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-            
+            _repository = documentRepository;   
+        }
+        
+        //Messenger _messenger = new();
+        [HttpGet]
+        public ActionResult<IEnumerable<DocumentData>> GetDocuments()
+        {
+            var shownDocuments = _repository.GetAll();
+            return Ok(shownDocuments ?? new List<DocumentData>());
         }
 
+
         [HttpPost]
-        public IActionResult NewDocument([FromBody] string document)
+        public async Task<IActionResult> NewDocument([FromForm] IFormFile file, [FromForm] string name)
         {
-            //send the document on to the ocr worker and receive the result
-            _messenger.Sender.SendDocument(document);
-            var info = _messenger.Receiver.ReceiveInfo().Result;
-            //still have to add return parse into doc data
-            DocumentData newDoc = new();
+            using var reader = new StreamReader(file.OpenReadStream());
+            var content = await reader.ReadToEndAsync();
+
+            var newDoc = new DocumentData
+            {
+                Title = name,
+                //Summary = "Noch keine Zusammenfassung"
+            };
+
+            await _publisher.PublishNewDocumentAsync(content);
+
             _repository.Insert(newDoc);
-            return StatusCode(StatusCodes.Status200OK);
-            //throw new NotImplementedException();
+            return Ok();
         }
+
 
         [HttpDelete("{id}")]
         public IActionResult DeleteDocument([FromRoute(Name = "id")]string id) 
