@@ -18,15 +18,27 @@ services:
       - db
     environment:
       ConnectionStrings__Default: "Host=db;Database=myapp;Username=user;Password=password"
-    ports:
-      - "5001:80"
+    expose:
+      - "80"
   
   webapp:
     build:
-      context: .
-      dockerfile: DocumentManagementSystem/Dockerfile
+      context: ./documentmanagementui
+      dockerfile: Dockerfile
     ports:
-      - "5000:80"
+      - "8080:80"
+    depends_on:
+      - api
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
 
 volumes:
   pgdata:
+  rabbitmq_data:

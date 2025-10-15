@@ -1,3 +1,4 @@
+using DocumentManagementSystem.Controllers;
 using DocumentManagementSystem.DataAccess;
 using DocumentManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,6 @@ builder.Services.AddSingleton<IDocumentRepository, DocumentRepository>();
 builder.Services.AddDbContextPool<DatabaseContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("MainDatabase") ??
         throw new InvalidOperationException("Connection string 'MainDatabase'" +" not found.")));
-
 
 
 var app = builder.Build();
