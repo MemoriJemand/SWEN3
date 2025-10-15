@@ -39,6 +39,8 @@ namespace DocumentManagementSystem.Controllers
                 //Summary = "Noch keine Zusammenfassung"
             };
 
+            await _publisher.PublishNewDocumentAsync(content);
+
             _repository.Insert(newDoc);
             return Ok();
         }
