@@ -1,5 +1,6 @@
 ﻿using DocumentManagementSystem.DataAccess;
 using DocumentManagementSystem.Models;
+using DocumentManagementSystem.Messaging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
@@ -11,6 +12,7 @@ namespace DocumentManagementSystem.Controllers
     public class DocumentController : ControllerBase
     {
         IDocumentRepository _repository;
+        Messenger _messenger = new();
         [HttpGet]
         public ActionResult<IEnumerable<DocumentData>> GetDocuments([FromBody] string parameters)
         {
@@ -28,11 +30,14 @@ namespace DocumentManagementSystem.Controllers
         }
 
         [HttpPost]
-        public IActionResult NewDocument(/*figure out new document input format*/)
+        public IActionResult NewDocument([FromBody] string document)
         {
-            //parse the input and send it on to the new document processing
-            DocumentData document = new();//add input parse and everything related to that
-            _repository.Insert(document);
+            //send the document on to the ocr worker and receive the result
+            _messenger.Sender.SendDocument(document);
+            var info = _messenger.Receiver.ReceiveInfo().Result;
+            //still have to add return parse into doc data
+            DocumentData newDoc = new();
+            _repository.Insert(newDoc);
             return StatusCode(StatusCodes.Status200OK);
             //throw new NotImplementedException();
         }

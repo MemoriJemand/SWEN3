@@ -2,7 +2,7 @@
 using System.Text;
 using System.Threading.Channels;
 
-namespace DocumentManagementSystem.Messaging
+namespace OCRWorker.Messaging
 {
     public class Sender
     {
@@ -10,9 +10,9 @@ namespace DocumentManagementSystem.Messaging
         
         public async void SendDocument(string document)
         {
-            await Channel.QueueDeclareAsync("documents", true, false, false, null);
+            await Channel.QueueDeclareAsync("ocrResults", true, false, false, null);
             var body = Encoding.UTF8.GetBytes(document);
-            await Channel.BasicPublishAsync(exchange: string.Empty, routingKey: "documents", body: body);
+            await Channel.BasicPublishAsync(exchange: string.Empty, routingKey: "ocrResults", body: body);
         }
     }
 }
