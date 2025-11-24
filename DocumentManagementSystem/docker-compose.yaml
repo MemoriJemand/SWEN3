@@ -17,11 +17,13 @@ services:
     depends_on:
       - db
     environment:
-    - ConnectionStrings__MainDatabase=Host=db;Port=5432;Database=myapp;Username=user;Password=password
-    - ASPNETCORE_URLS=http://+:80
-    - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MainDatabase=Host=db;Port=5432;Database=myapp;Username=user;Password=password
+      - ASPNETCORE_URLS=http://+:80
+      - ASPNETCORE_ENVIRONMENT=Development
     ports:
-    - "8080:80"
+      - "8080:80"
+    models:
+      - llm
   
   webapp:
     build:
@@ -41,6 +43,10 @@ services:
       - 15672:15672
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+
+models:
+  llm:
+    model: hf.co/tonyc666/text_summarization-Q4_K_M-GGUF:Q4_K_M
       
 
 volumes:

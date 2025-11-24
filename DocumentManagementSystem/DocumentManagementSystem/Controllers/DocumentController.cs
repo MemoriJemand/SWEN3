@@ -13,6 +13,7 @@ namespace DocumentManagementSystem.Controllers
     {
         IDocumentRepository _repository;
         INewDocumentPublisher _publisher;
+        Summarizer _summarizer;
         public DocumentController(IDocumentRepository documentRepository)
         {
             _repository = documentRepository;   
@@ -35,7 +36,7 @@ namespace DocumentManagementSystem.Controllers
             var newDoc = new DocumentData
             {
                 Title = name,
-                //Summary = "Noch keine Zusammenfassung"
+                Summary = _summarizer.returnSummary(content)
             };
 
             await _publisher.PublishNewDocumentAsync(content);
