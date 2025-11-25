@@ -10,10 +10,10 @@ namespace Messaging.Common.Options
     public sealed class RabbitMqOptions
     {
         // Connection
-        public string HostName { get; set; } = "rabbitmq";
+        public string HostName { get; set; } = "host.docker.internal";
         public int Port { get; set; } = 5672;
-        public string UserName { get; set; } = "guest";
-        public string Password { get; set; } = "guest";
+        public string UserName { get; set; } = "webapi";
+        public string Password { get; set; } = "InSecurePassword";
         public string VirtualHost { get; set; } = ConnectionFactory.DefaultVHost;
 
         // Exchange(s)
