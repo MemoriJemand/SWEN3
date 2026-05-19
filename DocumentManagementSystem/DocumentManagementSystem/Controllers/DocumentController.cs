@@ -12,14 +12,7 @@ namespace DocumentManagementSystem.Controllers
     [ApiController]
     public class DocumentController : ControllerBase
     {
-        IDocumentRepository _repository;
-        INewDocumentPublisher _publisher;
         IBusinessLayer _bridge;
-        Summarizer _summarizer;
-        public DocumentController(IDocumentRepository documentRepository)
-        {
-            _repository = documentRepository;   
-        }
         
         [HttpGet]
         public ActionResult<IEnumerable<DocumentData>> GetDocuments()

@@ -1,31 +1,40 @@
 ﻿using DocumentManagementSystem.DataAccess;
+using DocumentManagementSystem.Messaging;
 using DocumentManagementSystem.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace DocumentManagementSystem.Business
 {
-    public class BusinessLayer
+    public class BusinessLayer : IBusinessLayer
     {
         IDocumentRepository _repository;
+        INewDocumentPublisher _publisher;
+        private Summarizer _summarizer = new();
 
         private string getSummary(string text) 
         {
             //send to ai
-            return "";
+            var result = _summarizer.returnSummary(text);
+            return result;
         }
         private bool uploadDocument(DocumentData data) 
         {
             //save to repository
-            return false;
+            _repository.Insert(data);
+            var check = _repository.GetById(data.Id);
+            return (check != null);
         }
         private string uploadOriginal(string data)
         {
             //save to minio
+
             return "";
         }
-        public DocumentData getDocument(string id) 
+        public DocumentData getDocumentById(string id) 
         {
-            //get data from repository and minio
+            //get data from repository
+            var result = _repository.GetById(Guid.Parse(id));
+            return result;
         }
         public bool newDocument(string name, string file, string? tags) 
         {
@@ -34,15 +43,16 @@ namespace DocumentManagementSystem.Business
             Document.Title = name;
             Document.Tags = tags;
             Document.Original = uploadOriginal(file);
-            Document.Text = getText(file);
+            Document.Text = getText(file).Result;
             Document.Summary = getSummary(Document.Text);
             Document.DateUploaded = DateTime.Now;
             bool res = uploadDocument(Document);
             return res;
         }
-        public string getText(string data)
+        public async Task<string> getText(string data)
         {
             //get ocr text
+            await _publisher.PublishNewDocumentAsync(data);
             return "";
         }
 
