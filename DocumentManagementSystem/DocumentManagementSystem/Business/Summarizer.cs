@@ -2,11 +2,11 @@
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace DocumentManagementSystem.Controllers
+namespace DocumentManagementSystem.Business
 {
     public class Summarizer
     {
-        private string Url = "http://model-runner.docker.internal/engines/llama.cpp/v1/";
+        private string Url = "http://model-runner.docker.internal";
 
         public string returnSummary(string doc) 
         {
@@ -16,9 +16,10 @@ namespace DocumentManagementSystem.Controllers
                 http.DefaultRequestHeaders.Clear();
                 http.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json; charset=utf-8");
                 
-                using (var content = new StringContent($"\"model\": \"hf.co/tonyc666/text_summarization-q4_k_m-gguf:q4_k_m\", \"messages\": [ {{ \"role\": \"user\",  \"content\": \"Summarise the following text: {doc}\" }} ], }}'"))
+                using (var content = new StringContent($"{{\"model\": \"ai/smollm2\",\"messages\": [ {{ \"role\": \"user\",  \"content\": \"Summarise the following text: {doc}\" }} ] }}"))
+                    
                 {
-                    using (var response =  http.PostAsync($"chat/completions", content))
+                    using (var response =  http.PostAsync($"/engines/v1/completions", content))
                     {
                         response.Wait();
                         var result = response.Result;

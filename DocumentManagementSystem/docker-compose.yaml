@@ -16,14 +16,14 @@ services:
       dockerfile: DocumentManagementSystem/Dockerfile
     depends_on:
       - db
+      - ai-runner
+      - rabbitmq
     environment:
       - ConnectionStrings__MainDatabase=Host=db;Port=5432;Database=myapp;Username=user;Password=password
       - ASPNETCORE_URLS=http://+:80
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "8080:80"
-    models:
-      - llm
   
   webapp:
     build:
@@ -44,11 +44,32 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
-models:
-  llm:
-    model: hf.co/tonyc666/text_summarization-Q4_K_M-GGUF:Q4_K_M
-      
+  ocr:
+    build:
+      context: ./OCRWorker
+      dockerfile: OCRWorker/Dockerfile
+
+  ai-runner:
+    provider:
+      type: model
+      options:
+        model: ai/smollm2
+
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=abcd
+      - MINIO_ROOT_PASSWORD=abcd2345
+      - MINIO_DEFAULT_BUCKETS=buck1
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+
 
 volumes:
   pgdata:
   rabbitmq_data:
+  minio_data:
