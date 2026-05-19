@@ -14,6 +14,7 @@ namespace DocumentManagementSystem.Controllers
     {
         IDocumentRepository _repository;
         INewDocumentPublisher _publisher;
+        IBusinessLayer _bridge;
         Summarizer _summarizer;
         public DocumentController(IDocumentRepository documentRepository)
         {
@@ -23,7 +24,7 @@ namespace DocumentManagementSystem.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<DocumentData>> GetDocuments()
         {
-            var shownDocuments = _repository.GetAll();
+            var shownDocuments = _bridge.getAllDocuments();
             return Ok(shownDocuments ?? new List<DocumentData>());
         }
 
