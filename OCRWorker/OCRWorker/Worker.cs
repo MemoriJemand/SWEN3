@@ -1,8 +1,11 @@
+using OCRWorker.Messaging;
+
 namespace OCRWorker
 {
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
+        private Messenger _messenger = new();
 
         public Worker(ILogger<Worker> logger)
         {
@@ -17,7 +20,12 @@ namespace OCRWorker
                 {
                     _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 }
-                await Task.Delay(1000, stoppingToken);
+                while (true)
+                {
+                    var message = await _messenger.Receiver.ReceiveDocument();
+                    message = message.Trim();
+                    _messenger.Sender.SendDocument(message);
+                }
             }
         }
     }
