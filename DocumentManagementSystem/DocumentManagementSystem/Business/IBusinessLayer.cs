@@ -8,5 +8,6 @@ namespace DocumentManagementSystem.Business
         bool newDocument(string name, string file, string? tags);
         IEnumerable<DocumentData> getAllDocuments();
         Task<string> getText(string data);
+        bool deleteDocument(string id);
     }
 }

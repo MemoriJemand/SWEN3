@@ -2,6 +2,7 @@
 using DocumentManagementSystem.Messaging;
 using DocumentManagementSystem.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 
 namespace DocumentManagementSystem.Business
 {
@@ -59,6 +60,17 @@ namespace DocumentManagementSystem.Business
         public IEnumerable<DocumentData> getAllDocuments()
         {
             return _repository.GetAll();
+        }
+
+        public bool deleteDocument(string id)
+        {
+            _repository.Delete(Guid.Parse(id));
+            var res = _repository.GetById(Guid.Parse(id));
+            if (res == null)
+            {
+                return true;
+            }
+            return false;
         }
 
     }
