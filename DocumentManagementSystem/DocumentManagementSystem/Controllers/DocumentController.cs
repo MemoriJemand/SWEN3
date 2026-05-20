@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
 using DocumentManagementSystem.Business;
 using Microsoft.IdentityModel.Tokens;
+using Nest;
+using OCRWorker.Model;
 
 namespace DocumentManagementSystem.Controllers
 {
@@ -14,7 +16,12 @@ namespace DocumentManagementSystem.Controllers
     public class DocumentController : ControllerBase
     {
         IBusinessLayer _bridge;
-        
+        private readonly IElasticClient _elastic;
+        public DocumentController(IElasticClient elastic)
+        {
+            _elastic = elastic;   
+        }
+
         [HttpGet]
         public ActionResult<IEnumerable<DocumentData>> GetDocuments()
         {
@@ -90,6 +97,22 @@ namespace DocumentManagementSystem.Controllers
         {
             //find specific document and return its metadata
             return StatusCode(501);//Not Implemented
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string query, CancellationToken token)
+        {
+            var response = await _elastic.SearchAsync<DocIndex>(s => s
+                .Query(q => q
+                    .Match(m => m
+                        .Field(f => f.Content)
+                        .Query(query)
+                    )
+                ),
+                token
+            );
+
+            return Ok(response.Documents);
         }
 
     }
