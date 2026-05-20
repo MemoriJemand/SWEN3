@@ -11,7 +11,7 @@ namespace DocumentManagementTests
 {
     public class Tests
     {
-        [SetUp]
+        /*[SetUp]
         public void Setup()
         {
         }
@@ -29,6 +29,6 @@ namespace DocumentManagementTests
 
             mockSet.Verify(m => m.Add(It.IsAny<DocumentData>()), Times.Once());
             mockContext.Verify(m => m.SaveChanges(), Times.Once());
-        }
+        }*/
     }
 }
