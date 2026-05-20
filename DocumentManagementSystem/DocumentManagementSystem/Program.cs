@@ -9,6 +9,8 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Messaging.Common.Options;
 using Messaging.Common.Extensions;
 using DocumentManagementSystem.Messaging;
+using Minio;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +24,10 @@ builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
 builder.Services.AddDbContextPool<DatabaseContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("MainDatabase") ??
         throw new InvalidOperationException("Connection string 'MainDatabase'" +" not found.")));
-
+builder.Services.AddMinio(configureClient => configureClient
+           .WithEndpoint(builder.Configuration.GetValue<string>("Minio:Endpoint"))
+           .WithCredentials(builder.Configuration.GetValue<string>("Minio:AccessKey"), builder.Configuration.GetValue<string>("Minio:SecretKey"))
+       .Build());
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

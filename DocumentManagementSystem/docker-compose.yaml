@@ -49,7 +49,7 @@ services:
 
   ocr:
     build:
-      context: ./OCRWorker
+      context: ../OCRWorker
       dockerfile: OCRWorker/Dockerfile
     container_name: ocrworker
     depends_on:

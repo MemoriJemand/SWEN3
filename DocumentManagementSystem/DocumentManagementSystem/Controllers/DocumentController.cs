@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
 using DocumentManagementSystem.Business;
+using Microsoft.IdentityModel.Tokens;
 
 namespace DocumentManagementSystem.Controllers
 {
@@ -23,12 +24,24 @@ namespace DocumentManagementSystem.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> NewDocument([FromForm] IFormFile file, [FromForm] string name, [FromForm] string tags)
+        public async Task<IActionResult> NewDocument()
         {
-            using var reader = new StreamReader(file.OpenReadStream());
-            var content = await reader.ReadToEndAsync();
-            //figure out if that's correct for reading the file
-            if (_bridge.newDocument(name, content, tags))
+            var form = await Request.ReadFormAsync();
+            var file = form["file"];
+            var name = form["name"];
+            var tags = form["tags"];
+            //check if required parts are there
+            if (file.IsNullOrEmpty() || name.IsNullOrEmpty()) {
+                return StatusCode(400);
+            }
+            //convert file to byte array
+            byte[] data = new byte[file.Count];
+            for (int i = 0; i < file.Count; i++)
+            {
+                data[i] = Convert.ToByte(file[i]);
+            }
+
+            if (_bridge.newDocument(name!, data, tags))
             {
                 return Ok();
             }
@@ -66,20 +79,17 @@ namespace DocumentManagementSystem.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateDocument([FromRoute(Name = "id")] string id, [FromBody] string body) 
+        public IActionResult UpdateDocument([FromRoute(Name = "id")] string id) 
         {
             //find specific document and change to body input
-            //DocumentData data = new DocumentData(); //parse once again
-            //_repository.Update(data);
-            //return Ok(); 
-            return StatusCode(501);
+            return StatusCode(501); //Not Implemented
         }
 
         [HttpGet("{id}/data")]
         public IActionResult GetMetadata([FromRoute(Name = "id")] string id) 
         {
             //find specific document and return its metadata
-            return StatusCode(501);
+            return StatusCode(501);//Not Implemented
         }
 
     }
