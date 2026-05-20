@@ -8,6 +8,7 @@ using DocumentManagementSystem.Business;
 using Microsoft.IdentityModel.Tokens;
 using Nest;
 using OCRWorker.Model;
+using Minio;
 
 namespace DocumentManagementSystem.Controllers
 {
@@ -15,14 +16,13 @@ namespace DocumentManagementSystem.Controllers
     [ApiController]
     public class DocumentController : ControllerBase
     {
-        IBusinessLayer _bridge;
+        private readonly IBusinessLayer _bridge;
         private readonly IElasticClient _elastic;
-        public DocumentController(IElasticClient elastic)
+        public DocumentController(IElasticClient elastic, IMinioClient minio, INewDocumentPublisher publisher, INewDocumentReceiver receiver, IDocumentRepository repository, ILogger logger)
         {
-            _elastic = elastic;   
+            _elastic = elastic;
+            _bridge = new BusinessLayer(repository, publisher, receiver, minio, logger);
         }
-
-        private readonly IBusinessLayer _bridge = new BusinessLayer();
         
         [HttpGet]
         public ActionResult<IEnumerable<DocumentData>> GetDocuments()

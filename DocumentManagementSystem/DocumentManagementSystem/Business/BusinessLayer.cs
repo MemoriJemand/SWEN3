@@ -16,10 +16,6 @@ namespace DocumentManagementSystem.Business
         private readonly ILogger _logger;
         private readonly Summarizer _summarizer = new();
 
-        public BusinessLayer()
-        {
-
-        }
         public BusinessLayer(IDocumentRepository repository, INewDocumentPublisher publisher, INewDocumentReceiver receiver, IMinioClient minio, ILogger logger)
         {
             _repository = repository;
@@ -104,7 +100,8 @@ namespace DocumentManagementSystem.Business
             //get ocr text
             _logger.LogInformation("Waiting for OCR text processing.");
             await _publisher.PublishNewDocumentAsync(data);
-            return "";
+            var res = _receiver.ReceiveDocumentText().Result;
+            return res;
         }
 
         public IEnumerable<DocumentData> getAllDocuments()
