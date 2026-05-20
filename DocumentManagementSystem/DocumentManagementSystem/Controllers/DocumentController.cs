@@ -13,7 +13,7 @@ namespace DocumentManagementSystem.Controllers
     [ApiController]
     public class DocumentController : ControllerBase
     {
-        IBusinessLayer _bridge;
+        private readonly IBusinessLayer _bridge = new BusinessLayer();
         
         [HttpGet]
         public ActionResult<IEnumerable<DocumentData>> GetDocuments()

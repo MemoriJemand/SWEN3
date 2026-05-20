@@ -46,7 +46,7 @@ builder.Services.AddRabbitMq(mq.HostName, mq.UserName, mq.Password, mq.VirtualHo
 builder.Services.AddLogging(builder => builder.AddConsole());
 builder.Services.AddSingleton<INewDocumentPublisher, NewDocumentPublisher>();
 builder.Services.AddSingleton<INewDocumentReceiver, NewDocumentReceiver>();
-builder.Services.AddSingleton<IBusinessLayer, BusinessLayer>();
+builder.Services.AddScoped<IBusinessLayer, BusinessLayer>();
 
 var app = builder.Build();
 
@@ -63,10 +63,17 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
     db.Database.Migrate();
+    var publisher = scope.ServiceProvider.GetRequiredService<INewDocumentPublisher>();
+    var receiver = scope.ServiceProvider.GetRequiredService<INewDocumentReceiver>();
+    var repository = scope.ServiceProvider.GetRequiredService<IDocumentRepository>();
+    var minio = scope.ServiceProvider.GetRequiredService<IMinioClient>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
+    var business = scope.ServiceProvider.GetRequiredService<IBusinessLayer>();
 }
 
 

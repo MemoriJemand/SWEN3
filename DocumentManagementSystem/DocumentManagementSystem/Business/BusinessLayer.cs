@@ -9,12 +9,25 @@ namespace DocumentManagementSystem.Business
 {
     public class BusinessLayer : IBusinessLayer
     {
-        IDocumentRepository _repository;
-        INewDocumentPublisher _publisher;
-        INewDocumentReceiver _receiver;
-        IMinioClient _minio;
-        ILogger _logger;
-        private Summarizer _summarizer = new();
+        private readonly IDocumentRepository _repository;
+        private readonly INewDocumentPublisher _publisher;
+        private readonly INewDocumentReceiver _receiver;
+        private readonly IMinioClient _minio;
+        private readonly ILogger _logger;
+        private readonly Summarizer _summarizer = new();
+
+        public BusinessLayer()
+        {
+
+        }
+        public BusinessLayer(IDocumentRepository repository, INewDocumentPublisher publisher, INewDocumentReceiver receiver, IMinioClient minio, ILogger logger)
+        {
+            _repository = repository;
+            _publisher = publisher;
+            _receiver = receiver;
+            _minio = minio;
+            _logger = logger;
+        }
 
         private string getSummary(string text) 
         {
