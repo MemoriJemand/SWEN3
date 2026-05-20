@@ -10,6 +10,7 @@ using Messaging.Common.Options;
 using Messaging.Common.Extensions;
 using DocumentManagementSystem.Messaging;
 using Minio;
+using DocumentManagementSystem.Business;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,7 +43,10 @@ builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection("Ra
 //RabbitMQ aufgebaut mithilfe von https://dotnettutorials.net
 var mq = builder.Configuration.GetSection("RabbitMq").Get<RabbitMqOptions>()!;
 builder.Services.AddRabbitMq(mq.HostName, mq.UserName, mq.Password, mq.VirtualHost);
+builder.Services.AddLogging(builder => builder.AddConsole());
 builder.Services.AddSingleton<INewDocumentPublisher, NewDocumentPublisher>();
+builder.Services.AddSingleton<INewDocumentReceiver, NewDocumentReceiver>();
+builder.Services.AddSingleton<IBusinessLayer, BusinessLayer>();
 
 var app = builder.Build();
 

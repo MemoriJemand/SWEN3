@@ -100,6 +100,7 @@ function App() {
     const [selectedDoc, setSelectedDoc] = useState(null);
     const [newDocName, setNewDocName] = useState("");
     const [newDocFile, setNewDocFile] = useState(null);
+    const [newDocTags, setNewDocTags] = useState("");
 
     useEffect(() => {
         fetch("http://localhost:8080/api/documents")
@@ -155,6 +156,7 @@ function App() {
         const formData = new FormData();
         formData.append("name", newDocName);
         formData.append("file", newDocFile);
+        formData.append("tags", NewDocTags);
 
         fetch("http://localhost:8080/api/documents", {
             method: "POST",
@@ -203,6 +205,12 @@ function App() {
                 <input
                     type="file"
                     onChange={e => setNewDocFile(e.target.files[0])}
+                />
+                <input
+                    type="text"
+                    placeholder="Tags hinzufügen"
+                    value={newDocTags}
+                    onChange={e => setNewDocTags(e.target.value)}
                 />
                 <button type="submit">Hochladen</button>
             </form>
