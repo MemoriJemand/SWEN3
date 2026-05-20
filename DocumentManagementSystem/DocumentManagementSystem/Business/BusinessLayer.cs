@@ -54,9 +54,9 @@ namespace DocumentManagementSystem.Business
             //transform input into repository data
             DocumentData Document = new DocumentData();
             Document.Title = name;
-            Document.Tags = tags;
+            Document.Tags = tags?? "";
             Document.Original = uploadOriginal(file);
-            Document.Text = getText(file.ToString()).Result;
+            Document.Text = getText(file.ToString()!).Result;
             Document.Summary = getSummary(Document.Text);
             Document.DateUploaded = DateTime.Now;
             bool res = uploadDocument(Document);
