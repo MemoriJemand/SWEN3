@@ -10,6 +10,7 @@ using Messaging.Common.Options;
 using Messaging.Common.Extensions;
 using DocumentManagementSystem.Messaging;
 using Minio;
+using Nest;
 using DocumentManagementSystem.Business;
 
 
@@ -45,6 +46,12 @@ var mq = builder.Configuration.GetSection("RabbitMq").Get<RabbitMqOptions>()!;
 builder.Services.AddRabbitMq(mq.HostName, mq.UserName, mq.Password, mq.VirtualHost);
 builder.Services.AddLogging(builder => builder.AddConsole());
 builder.Services.AddSingleton<INewDocumentPublisher, NewDocumentPublisher>();
+builder.Services.AddSingleton<IElasticClient>(sp =>
+{
+    var settings = new ConnectionSettings(new Uri("http://elasticsearch:9200"))
+        .DefaultIndex("documents");
+    return new ElasticClient(settings);
+});
 builder.Services.AddSingleton<INewDocumentReceiver, NewDocumentReceiver>();
 builder.Services.AddScoped<IBusinessLayer, BusinessLayer>();
 

@@ -8,6 +8,7 @@ host.Run();*/
 using OCRWorker;
 using OCRWorker.Interfaces;
 using OCRWorker.Services;
+using Nest;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -18,6 +19,12 @@ Host.CreateDefaultBuilder(args)
         services.AddSingleton<IOcrEngine, TesseractEngineOcr>();
         services.AddSingleton<PdfToImageConverter>();
         services.AddHostedService<Worker>();
+        services.AddSingleton<IElasticClient>(sp =>
+        {
+            var settings = new ConnectionSettings(new Uri("http://elasticsearch:9200"))
+                .DefaultIndex("documents");
+            return new ElasticClient(settings);
+        });
     })
     .Build()
     .Run();
