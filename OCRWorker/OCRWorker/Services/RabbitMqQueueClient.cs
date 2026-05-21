@@ -19,13 +19,15 @@ namespace OCRWorker.Services
         {
             var factory = new ConnectionFactory
             {
-                HostName = "rabbitmq"
+                HostName = "rabbitmq",
+                UserName = "ocr",
+                Password = "password"
             };
             _connection = await factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();
 
             await _channel.QueueDeclareAsync(
-                queue: "ocr-jobs",
+                queue: "documents_new",
                 durable: true,
                 exclusive: false,
                 autoDelete: false
@@ -48,7 +50,7 @@ namespace OCRWorker.Services
 
         public async Task<JobMessage?> ReceiveAsync(CancellationToken token)
         {
-            var result = await _channel!.BasicGetAsync("ocr-jobs", autoAck: false);
+            var result = await _channel!.BasicGetAsync("documents_new", autoAck: false);
             if (result == null)
             {
                 return null;

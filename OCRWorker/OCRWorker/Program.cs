@@ -17,8 +17,9 @@ Host.CreateDefaultBuilder(args)
     {
         services.AddSingleton<IQueueClient, RabbitMqQueueClient>();
         services.AddSingleton<IOcrEngine, TesseractEngineOcr>();
-        services.AddSingleton<PdfToImageConverter>();
         services.AddHostedService<Worker>();
+        services.AddSingleton<IPdfToImageConverter, PdfToImageConverter>();
+        services.AddSingleton<ITesseractEngineWrapper, TesseractEngineWrapper>();
         services.AddSingleton<IElasticClient>(sp =>
         {
             var settings = new ConnectionSettings(new Uri("http://elasticsearch:9200"))

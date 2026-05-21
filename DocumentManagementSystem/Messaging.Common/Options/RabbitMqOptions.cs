@@ -10,18 +10,18 @@ namespace Messaging.Common.Options
     public sealed class RabbitMqOptions
     {
         // Connection
-        public string HostName { get; set; } = "host.docker.internal";
+        public string HostName { get; set; } = "rabbitmq";
         public int Port { get; set; } = 5672;
-        public string UserName { get; set; } = "webapi";
-        public string Password { get; set; } = "InSecurePassword";
-        public string VirtualHost { get; set; } = ConnectionFactory.DefaultVHost;
+        public string UserName { get; set; } = "api";
+        public string Password { get; set; } = "word";
+        public string VirtualHost { get; set; } = "/";
 
         // Exchange(s)
         public string ExchangeName { get; set; } = "DocumentManager";
 
         // Dead-lettering (optional but recommended)
-        public string? DlxExchangeName { get; set; } = "document_queue.dlx";
-        public string? DlxQueueName { get; set; } = "document_queue.dlq";
+        //public string? DlxExchangeName { get; set; } = "document_queue.dlx";
+        //public string? DlxQueueName { get; set; } = "document_queue.dlq";
 
         // Queues we care about for this feature set
         public string DocumentQueue { get; set; } = "documents_new";

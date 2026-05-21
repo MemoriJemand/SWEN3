@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   db:
     image: postgres:15
@@ -15,9 +16,16 @@ services:
       context: .
       dockerfile: DocumentManagementSystem/Dockerfile
     depends_on:
-      - db
-      - ai-runner
-      - rabbitmq
+        rabbitmq:
+          condition: service_healthy
+        db:
+          condition: service_started
+        minio:
+          condition: service_started
+        elasticsearch:
+          condition: service_started
+        kibana:
+          condition: service_started
     environment:
       - ConnectionStrings__MainDatabase=Host=db;Port=5432;Database=myapp;Username=user;Password=password
       - ASPNETCORE_URLS=http://+:80
@@ -38,12 +46,21 @@ services:
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
+    hostname: rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
     environment:
       RABBITMQ_DEFAULT_USER: user
       RABBITMQ_DEFAULT_PASS: pass
+      RABBITMQ_NODENAME: rabbit@rabbitmq
+      RABBITMQ_DEFAULT_VHOST: /
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
@@ -53,7 +70,8 @@ services:
       dockerfile: OCRWorker/Dockerfile
     container_name: ocrworker
     depends_on:
-      - rabbitmq
+        rabbitmq:
+          condition: service_healthy
     environment:
       RABBITMQ__HOST: rabbitmq
       RABBITMQ__USER: user

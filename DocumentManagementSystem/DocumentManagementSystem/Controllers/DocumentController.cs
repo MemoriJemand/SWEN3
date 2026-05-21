@@ -7,7 +7,6 @@ using NuGet.Protocol;
 using DocumentManagementSystem.Business;
 using Microsoft.IdentityModel.Tokens;
 using Nest;
-using OCRWorker.Model;
 using Minio;
 
 namespace DocumentManagementSystem.Controllers
@@ -18,7 +17,7 @@ namespace DocumentManagementSystem.Controllers
     {
         private readonly IBusinessLayer _bridge;
         private readonly IElasticClient _elastic;
-        public DocumentController(IElasticClient elastic, IMinioClient minio, INewDocumentPublisher publisher, INewDocumentReceiver receiver, IDocumentRepository repository, ILogger logger)
+        public DocumentController(IElasticClient elastic, IMinioClient minio, INewDocumentPublisher publisher, INewDocumentReceiver receiver, IDocumentRepository repository, ILogger<BusinessLayer> logger)
         {
             _elastic = elastic;
             _bridge = new BusinessLayer(repository, publisher, receiver, minio, logger);

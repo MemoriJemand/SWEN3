@@ -13,10 +13,10 @@ namespace DocumentManagementSystem.Business
         private readonly INewDocumentPublisher _publisher;
         private readonly INewDocumentReceiver _receiver;
         private readonly IMinioClient _minio;
-        private readonly ILogger _logger;
+        private readonly ILogger<BusinessLayer> _logger;
         private readonly Summarizer _summarizer = new();
 
-        public BusinessLayer(IDocumentRepository repository, INewDocumentPublisher publisher, INewDocumentReceiver receiver, IMinioClient minio, ILogger logger)
+        public BusinessLayer(IDocumentRepository repository, INewDocumentPublisher publisher, INewDocumentReceiver receiver, IMinioClient minio, ILogger<BusinessLayer> logger)
         {
             _repository = repository;
             _publisher = publisher;

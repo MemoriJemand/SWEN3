@@ -20,7 +20,7 @@ namespace Messaging.Common.Topology
 
             // Declare the Dead Letter Exchange (DLX) if configured
             //    - Used for failed/rejected messages (safety net)
-            if (!string.IsNullOrWhiteSpace(rabbitMqOptions.DlxExchangeName))
+            /*if (!string.IsNullOrWhiteSpace(rabbitMqOptions.DlxExchangeName))
             {
                 channel.ExchangeDeclareAsync(
                     exchange: rabbitMqOptions.DlxExchangeName!,
@@ -41,29 +41,29 @@ namespace Messaging.Common.Topology
                     // Bind DLQ to DLX (routingKey irrelevant for fanout exchange)
                     channel.QueueBindAsync(rabbitMqOptions.DlxQueueName, rabbitMqOptions.DlxExchangeName!, routingKey: "");
                 }
-            }
+            }*/
 
             // Common queue arguments (applied to business queues)
             //    - Add DLX binding if one exists, so rejected messages are routed safely
-            var args = new Dictionary<string, object>();
+            /*var args = new Dictionary<string, object>();
             if (!string.IsNullOrWhiteSpace(rabbitMqOptions.DlxExchangeName))
-                args["x-dead-letter-exchange"] = rabbitMqOptions.DlxExchangeName;
+                args["x-dead-letter-exchange"] = rabbitMqOptions.DlxExchangeName;*/
 
 
             channel.QueueDeclareAsync(
                 queue: rabbitMqOptions.DocumentQueue,
                 durable: true,
                 exclusive: false,
-                autoDelete: false,
-                arguments: args);
+                autoDelete: false/*,
+                arguments: args*/);
 
 
             channel.QueueDeclareAsync(
                 queue: rabbitMqOptions.InformationQueue,
                 durable: true,
                 exclusive: false,
-                autoDelete: false,
-                arguments: args); 
+                autoDelete: false/*,
+                arguments: args*/); 
 
 
             channel.QueueBindAsync(
