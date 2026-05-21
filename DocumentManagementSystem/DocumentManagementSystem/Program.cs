@@ -53,7 +53,7 @@ builder.Services.AddSingleton<IElasticClient>(sp =>
     return new ElasticClient(settings);
 });
 builder.Services.AddSingleton<INewDocumentReceiver, NewDocumentReceiver>();
-builder.Services.AddSingleton<IBusinessLayer, BusinessLayer>();
+builder.Services.AddScoped<IBusinessLayer, BusinessLayer>();
 
 var app = builder.Build();
 

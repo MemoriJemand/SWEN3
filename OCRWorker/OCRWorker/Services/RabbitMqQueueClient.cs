@@ -20,8 +20,10 @@ namespace OCRWorker.Services
             var factory = new ConnectionFactory
             {
                 HostName = "rabbitmq",
-                UserName = "ocr",
-                Password = "password"
+                Port = 5672,
+                UserName = "user",
+                Password = "pass",
+                VirtualHost = "/"
             };
             _connection = await factory.CreateConnectionAsync();
             _channel = await _connection.CreateChannelAsync();

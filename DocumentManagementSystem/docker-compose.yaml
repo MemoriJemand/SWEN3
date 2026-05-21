@@ -30,6 +30,11 @@ services:
       - ConnectionStrings__MainDatabase=Host=db;Port=5432;Database=myapp;Username=user;Password=password
       - ASPNETCORE_URLS=http://+:80
       - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMq__HostName=rabbitmq
+      - RabbitMq__Port=5672
+      - RabbitMq__UserName=user
+      - RabbitMq__Password=pass
+      - RabbitMq__VirtualHost=/
     ports:
       - "8080:80"
   
@@ -56,7 +61,7 @@ services:
       RABBITMQ_NODENAME: rabbit@rabbitmq
       RABBITMQ_DEFAULT_VHOST: /
     healthcheck:
-      test: rabbitmq-diagnostics -q ping
+      test: ["CMD", "rabbitmq-diagnostics", "check_port_connectivity"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -73,9 +78,11 @@ services:
         rabbitmq:
           condition: service_healthy
     environment:
-      RABBITMQ__HOST: rabbitmq
-      RABBITMQ__USER: user
-      RABBITMQ__PASS: pass
+      RabbitMq__HostName: rabbitmq
+      RabbitMq__Port: 5672
+      RabbitMq__UserName: user
+      RabbitMq__Password: pass
+      RabbitMq__VirtualHost: /
 
   ai-runner:
     provider:
