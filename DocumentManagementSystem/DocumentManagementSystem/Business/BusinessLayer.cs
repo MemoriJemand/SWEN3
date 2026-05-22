@@ -4,6 +4,7 @@ using DocumentManagementSystem.Models;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Minio;
 using System.Diagnostics.Eventing.Reader;
+using System.Text.Json;
 
 namespace DocumentManagementSystem.Business
 {
@@ -40,7 +41,8 @@ namespace DocumentManagementSystem.Business
                 _logger.LogError("Received no summary from the AI.");
                 return "";
             }
-            
+
+
         }
         private bool uploadDocument(DocumentData data) 
         {

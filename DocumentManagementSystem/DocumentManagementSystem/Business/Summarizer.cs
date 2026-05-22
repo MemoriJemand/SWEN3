@@ -16,7 +16,7 @@ namespace DocumentManagementSystem.Business
                 http.DefaultRequestHeaders.Clear();
                 http.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json; charset=utf-8");
                 
-                using (var content = new StringContent($"{{\"model\": \"ai/smollm2\",\"messages\": [ {{ \"role\": \"user\",  \"content\": \"Summarise the following text: {doc}\" }} ] }}"))
+                using (var content = new StringContent($"{{\"model\": \"ai/smollm2\",\"prompt\": \"Summarise the following text: {doc}\" }}"))
                     
                 {
                     using (var response =  http.PostAsync($"/engines/v1/completions", content))
