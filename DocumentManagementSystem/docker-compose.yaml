@@ -94,14 +94,15 @@ services:
     image: minio/minio
     container_name: minio
     environment:
-      - MINIO_ROOT_USER=abcd
-      - MINIO_ROOT_PASSWORD=abcd2345
-      - MINIO_DEFAULT_BUCKETS=buck1
+      MINIO_ROOT_USER: abcd
+      MINIO_ROOT_PASSWORD: abcd2345
+    command: server /data --console-address ":9001"
     ports:
       - "9000:9000"
       - "9001:9001"
     volumes:
       - minio_data:/data
+
   
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0

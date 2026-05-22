@@ -35,27 +35,38 @@ namespace DocumentManagementSystem.Controllers
         public async Task<IActionResult> NewDocument()
         {
             var form = await Request.ReadFormAsync();
-            var file = form["file"];
-            var name = form["name"];
-            var tags = form["tags"];
+            var file = form.Files["file"];
+            var name = form["name"].ToString();
+            var tags = form["tags"].ToString();
+            if (tags == null)
+            {
+                tags = "no tag";
+            }
             //check if required parts are there
-            if (file.IsNullOrEmpty() || name.IsNullOrEmpty()) {
+            if (file == null || string.IsNullOrEmpty(name)) {
                 return StatusCode(400);
             }
             //convert file to byte array
-            byte[] data = new byte[file.Count];
-            for (int i = 0; i < file.Count; i++)
+            byte[] data;
+            using (var ms = new MemoryStream())
             {
-                data[i] = Convert.ToByte(file[i]);
+                await file.CopyToAsync(ms);
+                data = ms.ToArray();
             }
-
-            if (_bridge.newDocument(name!, data, tags))
+            try
             {
-                return Ok();
+                if (_bridge.newDocument(name!, data, tags))
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return StatusCode(500, "doc false");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, ex.ToString());
             }
         }
 

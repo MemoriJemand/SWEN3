@@ -29,7 +29,7 @@ builder.Services.AddDbContextPool<DatabaseContext>(opt =>
 builder.Services.AddMinio(configureClient => configureClient
            .WithEndpoint(builder.Configuration.GetValue<string>("Minio:Endpoint"))
            .WithCredentials(builder.Configuration.GetValue<string>("Minio:AccessKey"), builder.Configuration.GetValue<string>("Minio:SecretKey"))
-       .Build());
+       .WithSSL(false).Build());
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>

@@ -152,7 +152,10 @@ function App() {
     }
 
     function uploadDoc(e) {
-        e.preventDefault();
+        console.log("Name:", newDocName);
+        console.log("File:", newDocFile);
+        console.log("upload started");
+        //e.preventDefault();
         const formData = new FormData();
         formData.append("name", newDocName);
         formData.append("file", newDocFile);
@@ -194,26 +197,30 @@ function App() {
                 </div>
             </div>
 
-            <form onSubmit={uploadDoc} style={{ marginTop: "2rem" }}>
+            <div style={{ marginTop: "2rem" }}>
                 <h3>Neues Dokument hochladen</h3>
+
                 <input
                     type="text"
                     placeholder="Dokumentname"
                     value={newDocName}
                     onChange={e => setNewDocName(e.target.value)}
                 />
+
                 <input
                     type="file"
-                    onChange={e => setNewDocFile(e.target.files[0])}
+                    onChange={e => {
+                        const file = e.target.files[0];
+                        setNewDocFile(file);
+                        if (file) {
+                            const baseName = file.name.replace(/\.[^/.]+$/, "");
+                            setNewDocName(baseName);
+                        }
+                    }}
                 />
-                {/*<input
-                    type="text"
-                    placeholder="Tags hinzufügen"
-                    value={newDocTags}
-                    onChange={e => setNewDocTags(e.target.value)}
-                />*/}
-                <button type="submit">Hochladen</button>
-            </form>
+
+                <button onClick={uploadDoc}>Hochladen</button>
+            </div>
         </>
     );
 }

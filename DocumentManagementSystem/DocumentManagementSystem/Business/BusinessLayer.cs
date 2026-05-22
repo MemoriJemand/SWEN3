@@ -54,7 +54,9 @@ namespace DocumentManagementSystem.Business
         {
             //save to minio
             _logger.LogDebug("Saving the file temporarily.");
-            var path = Path.Combine("/tempFile", Path.GetRandomFileName());
+            var tempDir = Path.Combine(AppContext.BaseDirectory, "tempFile");
+            Directory.CreateDirectory(tempDir);
+            var path = Path.Combine(tempDir, Path.GetRandomFileName());
             File.WriteAllBytes(path, data);
             _logger.LogInformation("Uploading file to MinIO.");
             var result = FileUpload.Run(_minio, path).Result;
@@ -90,7 +92,7 @@ namespace DocumentManagementSystem.Business
             Document.Original = uploadOriginal(file);
             Document.Text = getText(file.ToString()!).Result;
             Document.Summary = getSummary(Document.Text);
-            Document.DateUploaded = DateTime.Now;
+            Document.DateUploaded = DateTime.UtcNow;
             bool res = uploadDocument(Document);
             _logger.LogInformation($"Document saved at: {Document.DateUploaded}.");
             return res;
