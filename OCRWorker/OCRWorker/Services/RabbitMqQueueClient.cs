@@ -49,7 +49,6 @@ namespace OCRWorker.Services
         {
             throw new NotImplementedException();
         }
-
         public async Task<JobMessage?> ReceiveAsync(CancellationToken token)
         {
             var result = await _channel!.BasicGetAsync("documents_new", autoAck: false);
@@ -57,10 +56,30 @@ namespace OCRWorker.Services
             {
                 return null;
             }
+
             var json = Encoding.UTF8.GetString(result.Body.ToArray());
-            var msg = JsonSerializer.Deserialize<JobMessage>(json);
-            msg!.DeliveryTag = result.DeliveryTag;
-            return msg;
+            var trimmed = json.TrimStart();
+
+            // Nachricht ist kein JSON → ignorieren
+            if (!(trimmed.StartsWith("{") || trimmed.StartsWith("[")))
+            {
+                return null;
+            }
+
+            try
+            {
+                var msg = JsonSerializer.Deserialize<JobMessage>(json);
+                msg!.DeliveryTag = result.DeliveryTag;
+                return msg;
+            }
+            catch
+            {
+                // JSON fehlerhaft → ignorieren
+                return null;
+            }
         }
+
+
+
     }
 }
